@@ -1,25 +1,25 @@
--   [Introduction]
--   [Goal of this Lab]
--   [Amazon Web Services]
--   [Common Crawl]
--   [Apache Spark]
--   [Building the pipeline]
-    -   [Sense and Store]
-    -   [Retrieve]
-    -   [Filter]
-    -   [Analysis]
-    -   [Visualization]
--   [Chaining the Pipeline Together]
--   [Using AWS]
--   [Report]
--   [Presentation]
+-   [Introduction](#introduction)
+-   [Goal of this Lab](#goal-of-this-lab)
+-   [Amazon Web Services](#amazon-web-services)
+-   [Common Crawl](#common-crawl)
+-   [Apache Spark](#apache-spark)
+-   [Building the pipeline](#building-the-pipeline)
+    -   [Sense and Store](#sense-and-store)
+    -   [Retrieve](#retrieve)
+    -   [Filter](#filter)
+    -   [Analysis](#analysis)
+    -   [Visualization](#visualization)
+-   [Chaining the Pipeline Together](#chaining-the-pipeline-together)
+-   [Using AWS](#using-aws)
+-   [Report](#report)
+-   [Presentation](#presentation)
 
 Introduction
 ============
 
-In the previous assignments, you have become familiarized with a number of big data frameworks such as Hadoop and Apache Spark, but we haven’t done much supercomputing, let alone on big data. In the second lab of Supercomputing with Big Data we will analyze the [Common Crawl], a monthly open-source crawl of the internet. We will be building a lookup table for Dutch phone numbers and the sites they are referenced in. As one might expect, the Common Crawl is a rather large data set — the [July 2017 crawl] is 240 TiB uncompressed. To facilitate this analysis, we will make use of Amazon Web Services (AWS). This assignment is based on a Yelp Engineering blog post called, [Analyzing the Web For the Price of a Sandwich], and the [commoncrawl/cc-pyspark examples].
+In the previous assignments, you have become familiarized with a number of big data frameworks such as Hadoop and Apache Spark, but we haven’t done much supercomputing, let alone on big data. In the second lab of Supercomputing with Big Data we will analyze the [Common Crawl](http://commoncrawl.org), a monthly open-source crawl of the internet. We will be building a lookup table for Dutch phone numbers and the sites they are referenced in. As one might expect, the Common Crawl is a rather large data set — the [July 2017 crawl](http://commoncrawl.org/2017/07/july-2017-crawl-archive-now-available/) is 240 TiB uncompressed. To facilitate this analysis, we will make use of Amazon Web Services (AWS). This assignment is based on a Yelp Engineering blog post called, [Analyzing the Web For the Price of a Sandwich](https://engineeringblog.yelp.com/2015/03/analyzing-the-web-for-the-price-of-a-sandwich.html), and the [commoncrawl/cc-pyspark examples](https://github.com/commoncrawl/cc-pyspark).
 
-This is the first year the lab is being held, and as such may experience some teething problems. Feedback is appreciated! The lab files will be hosted on [GitHub]. Feel free to make issues and/or pull requests to suggest or implement improvements.
+This is the first year the lab is being held, and as such may experience some teething problems. Feedback is appreciated! The lab files will be hosted on [GitHub](https://github.com/Tclv/SBD-Lab2). Feel free to make issues and/or pull requests to suggest or implement improvements.
 
 Goal of this Lab
 ================
@@ -55,29 +55,29 @@ Register for a educative account (does not require a credit card) and you are el
 
 If possible, we strongly recommend you get a normal account, as there are number of limitations associated with the starter accounts. AWS offers a large amount of different services, but for the first part of this lab only three will be relevant:
 
-[EC2]  
+[EC2](https://aws.amazon.com/ec2/)  
 Elastic Compute Cloud allows you to provision a variety of different machines that can be used to run a computation. An overview of the different machines and their use cases can be found on the EC2 website.
 
-[EMR]  
+[EMR](https://aws.amazon.com/emr/)  
 Elastic MapReduce is a layer on top of EC2, that allows you to quickly deploy MapReduce-like applications, for instance Apache Spark.
 
-[S3]  
+[S3](https://aws.amazon.com/s3/)  
 Simple Storage Server is an object based storage system that is easy to interact with from different AWS services.
 
-Note that the Common Crawl is hosted on AWS S3 in the [US east region], so any machines interacting with this data set should also be provisioned there.
+Note that the Common Crawl is hosted on AWS S3 in the [US east region](https://aws.amazon.com/public-datasets/common-crawl/), so any machines interacting with this data set should also be provisioned there.
 
-AWS EC2 offers spot instances, a marketplace for unused machines that you can bid on. These spot instances are often a order of magnitude cheaper than on-demand instances. The current price list can be found in the [EC2 website]. We recommend using spot instances for the entirety of this lab.
+AWS EC2 offers spot instances, a marketplace for unused machines that you can bid on. These spot instances are often a order of magnitude cheaper than on-demand instances. The current price list can be found in the [EC2 website](https://aws.amazon.com/ec2/spot/pricing/). We recommend using spot instances for the entirety of this lab.
 
 Common Crawl
 ============
 
-The Common Crawl provides free access to monthly crawl data of the internet. The results are saved in WARC (Web ARChive file format) files. Three different kind of files are hosted by the [Common Crawl][1]:
+The Common Crawl provides free access to monthly crawl data of the internet. The results are saved in WARC (Web ARChive file format) files. Three different kind of files are hosted by the [Common Crawl](http://commoncrawl.org/2014/04/navigating-the-warc-file-format/):
 
 -   WARC files which store the raw crawl data,
 -   WAT files which store computed metadata for the data stored in the WARC, and
 -   WET files which store extracted plaintext from the data stored in the WARC.
 
-The exact specification is [ISO 28500:2017]. Seeing how we are only interested in the plain text — as these contain the phone numbers — we will use the WET files.
+The exact specification is [ISO 28500:2017](http://bibnum.bnf.fr/warc/WARC_ISO_28500_version1_latestdraft.pdf). Seeing how we are only interested in the plain text — as these contain the phone numbers — we will use the WET files.
 
 Apache Spark
 ============
@@ -133,7 +133,7 @@ for dep in $dependencies; do
 done;
 ```
 
-A complete version of this script can be found in the [lab’s GitHub repository].
+A complete version of this script can be found in the [lab’s GitHub repository](https://github.com/Tclv/SBD-Lab2/blob/master/get_dependencies.sh).
 
 Building the pipeline
 =====================
@@ -183,12 +183,12 @@ for segment in $(gzip -dc $listing | head -$LOCAL_SEGMENTS ); do
 done
 ```
 
-A complete version of this script can be found in the [lab’s GitHub repository][2].
+A complete version of this script can be found in the [lab’s GitHub repository](https://github.com/Tclv/SBD-Lab2/blob/master/get_data.sh).
 
 Filter
 ------
 
-To identify phone numbers, we need some way to filter these from plaintext. The [Dutch phone number format] can be written in two ways, the international and national form. To keep the filtering relatively simple, we will limit ourselves to the international form, as the national form is only identified with a single zero prefix, causing false positives as any 10 digit number starting with a 0 will now be identified as a phone number.
+To identify phone numbers, we need some way to filter these from plaintext. The [Dutch phone number format](https://en.wikipedia.org/wiki/Telephone_numbers_in_the_Netherlands) can be written in two ways, the international and national form. To keep the filtering relatively simple, we will limit ourselves to the international form, as the national form is only identified with a single zero prefix, causing false positives as any 10 digit number starting with a 0 will now be identified as a phone number.
 
 The international format starts with either a +31, or 0031, then an optional “(0)”, and finally 9 digits. We allow a variety of marks to be inserted between the numbers: spaces, parenthesis, and dashes. The following regular expression captures the desired behaviour.
 
@@ -230,7 +230,7 @@ class PhoneFilter:
 Analysis
 --------
 
-We would like to analyze the phone numbers and the websites they are referenced on, after we complete the filtering stage. To allow for this analysis, we want to store the results in a suitable format. Apache Spark has introduced [DataFrames], from the documentation:
+We would like to analyze the phone numbers and the websites they are referenced on, after we complete the filtering stage. To allow for this analysis, we want to store the results in a suitable format. Apache Spark has introduced [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html), from the documentation:
 
 > A Dataset is a distributed collection of data. Dataset is a new interface added in Spark 1.6 that provides the benefits of RDDs (strong typing, ability to use powerful lambda functions) with the benefits of Spark SQL’s optimized execution engine.
 >
@@ -296,7 +296,7 @@ def get_file(self, file_uri):
     return open(file_uri, 'rb') # Binary mode
 ```
 
-If the URI refers to an S3 link, we need to download it first. We use [`boto3`], a library for interacting with S3, to download the segments. To download a segment, a file handle has to be supplied. We can use [`TemporaryFile`] to generate temporary files (and handles). These files are automatically removed when the file handle is garbage collected.
+If the URI refers to an S3 link, we need to download it first. We use [`boto3`](http://boto3.readthedocs.io/en/latest/), a library for interacting with S3, to download the segments. To download a segment, a file handle has to be supplied. We can use [`TemporaryFile`](https://docs.python.org/3/library/tempfile.html#tempfile.TemporaryFile) to generate temporary files (and handles). These files are automatically removed when the file handle is garbage collected.
 
 ``` python
 def get_s3(self, s3_uri)
@@ -373,7 +373,7 @@ if __name__ == "__main__":
 
 The advantage of this is that we can quickly try our program against different segment indices. This determines whether we will download the files from AWS, or use the local files, and how many segments we will analyze (i.e. the number of segment URIs in the input segment index).
 
-A complete version of this program can be found on the [lab’s GitHub] repository. Play around with the script, and reading the data. How many phone numbers can you find in the four sample files. Try and estimate how many there will be in the complete data set based on this.
+A complete version of this program can be found on the [lab’s GitHub](https://github.com/Tclv/SBD-Lab2/blob/master/phone_number_analysis.py) repository. Play around with the script, and reading the data. How many phone numbers can you find in the four sample files. Try and estimate how many there will be in the complete data set based on this.
 
 Using AWS
 =========
@@ -385,7 +385,7 @@ There are (at least) two ways to transfer files to S3:
 1.  The web interface, and
 2.  The command line interface.
 
-The web interface is straightforward to use. To use the command line interface, first install the [AWS CLI].
+The web interface is straightforward to use. To use the command line interface, first install the [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html).
 
 To copy a file
 
@@ -405,11 +405,11 @@ To move a file
 aws 3 mv path/to/file s3://destination-bucket/path/to/file
 ```
 
-The aws-cli contains much more functionality, which can be found on the [AWS-CLI docs].
+The aws-cli contains much more functionality, which can be found on the [AWS-CLI docs](https://aws.amazon.com/cli/).
 
 Move the phone analyser script, the dependency shell script, and the segment index to your S3 bucket.
 
-We are now ready to provision a cluster. Go to the EMR service, and select *Create Cluster*. Next select *Go to advanced options*, select the latest release, and check the frameworks you want to use (in this case Spark, and Hadoop). We need to enter some software settings specifically to ensure we are using Python 3. Enter the following in the *Edit software settings* dialog. A copy paste friendly example can be found on the [AWS site].
+We are now ready to provision a cluster. Go to the EMR service, and select *Create Cluster*. Next select *Go to advanced options*, select the latest release, and check the frameworks you want to use (in this case Spark, and Hadoop). We need to enter some software settings specifically to ensure we are using Python 3. Enter the following in the *Edit software settings* dialog. A copy paste friendly example can be found on the [AWS site](https://aws.amazon.com/premiumsupport/knowledge-center/emr-pyspark-python-3x/).
 
 ``` json
 [
@@ -429,7 +429,7 @@ We are now ready to provision a cluster. Go to the EMR service, and select *Crea
 
 EMR works with steps, which can be thought of as a job, or the execution of a single program. You can choose to add steps in the creation of the cluster, but this can also be done at a later time. Press *next*.
 
-In the *Hardware Configuration* screen, we can configure the arrangement and selection of the machines. I would suggest starting out with *m4.large* machines on spot pricing. You should be fine running an example workload with a single master node and two core nodes[2]. Be sure to select *spot pricing* and place an appropriate bid. Remember that you can always check the current prices in the information popup or on the [Amazon website][EC2 website]. After selecting the machines, press *next*.
+In the *Hardware Configuration* screen, we can configure the arrangement and selection of the machines. I would suggest starting out with *m4.large* machines on spot pricing. You should be fine running an example workload with a single master node and two core nodes[2]. Be sure to select *spot pricing* and place an appropriate bid. Remember that you can always check the current prices in the information popup or on the [Amazon website](https://aws.amazon.com/ec2/spot/pricing/). After selecting the machines, press *next*.
 
 In the *General Options* you can select a cluster name. You can tune where the system logs and a number of other features (more information in the popups). To install the dependencies on the system you need to add a *Bootstrap Action*. Select *Custom action*, then *Configure and add*. In this pop-up, give this action a appropriate name, the *Script location* should point to the dependency shell script in your previously created S3 bucket. Be aware that the correct install command on EC2 instances is `sudo pip-3.4`. You can leave the *Optional arguments* dialog empty. After finishing this step, press *next*.
 
@@ -442,7 +442,7 @@ After this has all been completed you are ready to spin up your first cluster by
     -p 4 
     -n "example arguments"
 
-Before the setup has finished you should also configure a proxy for the web interfaces. More detailed information can be found on the [AWS website]. You can check the logs in your S3 bucket, or the web interfaces to track the progress of your application and whether any errors have occurred. If everything went well, you should have output in your S3 bucket. Check this on your machine by copying the files and inspecting the results in a Spark shell by loading it via SQLContext.
+Before the setup has finished you should also configure a proxy for the web interfaces. More detailed information can be found on the [AWS website](http://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-web-interfaces.html). You can check the logs in your S3 bucket, or the web interfaces to track the progress of your application and whether any errors have occurred. If everything went well, you should have output in your S3 bucket. Check this on your machine by copying the files and inspecting the results in a Spark shell by loading it via SQLContext.
 
 ``` ipython
 ~ pyspark
@@ -497,29 +497,4 @@ Each group will have a short presentation where they present their proposed impr
 
 [1] An experienced Python developer will wonder why we are not using the more idiomatic approach using a `requirements.txt` together with `pip`. This is due to EC2’s bootstrapping mechanism being somewhat more straightforward to use with a simple Bash script.
 
-[2] By default, there are some limitations on the number of spot instances your account is allowed to provision. If you don’t have access to enough spot instances, the procedure to request additional can be found in the [AWS documentation].
-
-  [Common Crawl]: http://commoncrawl.org
-  [July 2017 crawl]: http://commoncrawl.org/2017/07/july-2017-crawl-archive-now-available/
-  [Analyzing the Web For the Price of a Sandwich]: https://engineeringblog.yelp.com/2015/03/analyzing-the-web-for-the-price-of-a-sandwich.html
-  [commoncrawl/cc-pyspark examples]: https://github.com/commoncrawl/cc-pyspark
-  [GitHub]: https://github.com/Tclv/SBD-Lab2
-  [EC2]: https://aws.amazon.com/ec2/
-  [EMR]: https://aws.amazon.com/emr/
-  [S3]: https://aws.amazon.com/s3/
-  [US east region]: https://aws.amazon.com/public-datasets/common-crawl/
-  [EC2 website]: https://aws.amazon.com/ec2/spot/pricing/
-  [1]: http://commoncrawl.org/2014/04/navigating-the-warc-file-format/
-  [ISO 28500:2017]: http://bibnum.bnf.fr/warc/WARC_ISO_28500_version1_latestdraft.pdf
-  [lab’s GitHub repository]: https://github.com/Tclv/SBD-Lab2/blob/master/get_dependencies.sh
-  [2]: https://github.com/Tclv/SBD-Lab2/blob/master/get_data.sh
-  [Dutch phone number format]: https://en.wikipedia.org/wiki/Telephone_numbers_in_the_Netherlands
-  [DataFrames]: https://spark.apache.org/docs/latest/sql-programming-guide.html
-  [`boto3`]: http://boto3.readthedocs.io/en/latest/
-  [`TemporaryFile`]: https://docs.python.org/3/library/tempfile.html#tempfile.TemporaryFile
-  [lab’s GitHub]: https://github.com/Tclv/SBD-Lab2/blob/master/phone_number_analysis.py
-  [AWS CLI]: http://docs.aws.amazon.com/cli/latest/userguide/installing.html
-  [AWS-CLI docs]: https://aws.amazon.com/cli/
-  [AWS site]: https://aws.amazon.com/premiumsupport/knowledge-center/emr-pyspark-python-3x/
-  [AWS website]: http://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-web-interfaces.html
-  [AWS documentation]: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html
+[2] By default, there are some limitations on the number of spot instances your account is allowed to provision. If you don’t have access to enough spot instances, the procedure to request additional can be found in the [AWS documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html).

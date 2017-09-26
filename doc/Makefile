@@ -9,7 +9,7 @@ PANDOC_OPTIONS_LATEX=--latex-engine=xelatex --variable papersize=a4 --variable d
 		     --variable mathfont="TeX Gyre Pagella" --variable monofont="Source Code Pro" \
 		     -H preamble.tex
 
-PANDOC_OPTIONS_MD= -t markdown_github --wrap=preserve --reference-links
+PANDOC_OPTIONS_MD= -t markdown_github --wrap=preserve 
 
 EXPORTED_DOCS=\
  $(INPUT:.text=.pdf)\
