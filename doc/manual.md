@@ -203,7 +203,7 @@ We would like to convert all matched phone numbers to a single format, so duplic
 (?:[\(\)\- ]*\( *?0 *?\))|[\(\)\- ]*
 ```
 
-Finally we convert all the following numbers to the “+31” format. Effectively this means we need to replace all the “0031” prefixes to “+31”. The following regular expression can be used to substitute “+31”.
+Finally, we convert all the following numbers to the “+31” format. Effectively this means we need to replace all the “0031” prefixes to “+31”. The following regular expression can be used to substitute “+31”.
 
 ``` regex
 ^00
@@ -435,7 +435,7 @@ In the *General Options* you can select a cluster name. You can tune where the s
 
 You should now arrive in the *Security Options* screen. If you have not created a *EC2 keypair*, I highly recommend that you do so now. This will allow you to forward the Yarn and Spark web interfaces to your browser. This makes debugging and monitoring the execution of your Spark Job much more manageable. To create a *EC2 keypair*, follow the AWS instructions.
 
-After this has all been completed you are ready to spin up your first cluster by pressing *Create cluster*. Once the cluster has been created, AWS will start provisioning machines. This should take about 10 minutes. In the meantime you can add a step. Go the *Steps* foldout, and select *Spark application* for *Step Type*. Clicking on *Configure* will open a dialogue in which you can select the application location in your S3 bucket, as well as provide a number of argument to the program, spark-submit, as well as your action on failure. We need to provide a number of arguments to the program to specify our input segment index, and output directory at the very list. An example argument list is included below
+After this has all been completed you are ready to spin up your first cluster by pressing *Create cluster*. Once the cluster has been created, AWS will start provisioning machines. This should take about 10 minutes. In the meantime you can add a step. Go the *Steps* foldout, and select *Spark application* for *Step Type*. Clicking on *Configure* will open a dialogue in which you can select the application location in your S3 bucket, as well as provide a number of argument to the program, spark-submit, as well as your action on failure. We need to provide a number of arguments to the program to specify our input segment index, and output directory at the very least. An example argument list is included below
 
     -i s3://sbd-ex/input/test_s3_wet.txt 
     -o s3://sbd-ex/output 
@@ -488,12 +488,12 @@ We have become familiar with both the pipeline in this exercise, as well as the 
 
 As a starting point you can make a good analysis of the application. Figure out what kind of of I/O is happening (e.g. how much MB’s does each machine have to download) versus the amount of compute time that is happening. You can try and find the optimal machine for this in a performance per dollar sense.
 
-Last a word of advice. Be careful not to overspend your credits. It is your responsibility to ensure you are not blowing all your credits straight away. How much data do you need to process to get a reasonable indication of the performance on the entire dataset? Can you make meaningful prediction from working with smaller sample sizes. Try and extrapolate this to the entire dataset.
+A word of advice: Be careful not to overspend your credits! It is your responsibility to ensure you are not blowing all your credits straight away. How much data do you need to process to get a reasonable indication of the performance on the entire dataset? Can you make meaningful prediction from working with smaller sample sizes? Try and extrapolate this to the entire dataset.
 
 Presentation
 ============
 
-Each group will have a short presentation where they present their proposed improvements, and how they panned out. This is not graded, but rather an informal session to see what your fellow students tried, and how that worked out. Prepare 1-2 slides per improvement, containing the aforementioned three points. The date and location of this session will be announced later in the course.
+Each group will have a short presentation where they present their proposed improvements, and how they panned out. This is not graded, but rather an informal session to see what your fellow students tried, and how that worked out. Prepare 1-2 slides per improvement you implemented, containing the aforementioned three points. The date and location of this session will be announced later.
 
 [1] An experienced Python developer will wonder why we are not using the more idiomatic approach using a `requirements.txt` together with `pip`. This is due to EC2’s bootstrapping mechanism being somewhat more straightforward to use with a simple Bash script.
 

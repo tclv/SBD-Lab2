@@ -310,7 +310,7 @@ be used to remove these.
 (?:[\(\)\- ]*\( *?0 *?\))|[\(\)\- ]*
 ```
 
-Finally we convert all the following numbers to the "+31" format. Effectively
+Finally, we convert all the following numbers to the "+31" format. Effectively
 this means we need to replace all the "0031" prefixes to "+31". The following
 regular expression can be used to substitute "+31".
 
@@ -614,7 +614,7 @@ can add a step. Go the *Steps* foldout, and select *Spark application* for
 select the application location in your S3 bucket, as well as provide a number
 of argument to the program, spark-submit, as well as your action on failure. We 
 need to provide a number of arguments to the program to specify our input 
-segment index, and output directory at the very list. An example argument list 
+segment index, and output directory at the very least. An example argument list 
 is included below
 
 ```
@@ -682,11 +682,11 @@ what kind of of I/O is happening (e.g. how much MB's does each machine have to
 download) versus the amount of compute time that is happening. You can try and 
 find the optimal machine for this in a performance per dollar sense. 
 
-Last a word of advice. Be careful not to overspend your credits. It is your 
+A word of advice: Be careful not to overspend your credits! It is your 
 responsibility to ensure you are not blowing all your credits straight away. 
 How much data do you need to process to get a reasonable indication of the 
 performance on the entire dataset? Can you make meaningful prediction from 
-working with smaller sample sizes. Try and extrapolate this to the entire 
+working with smaller sample sizes? Try and extrapolate this to the entire 
 dataset.
 
 Presentation
@@ -695,9 +695,9 @@ Presentation
 Each group will have a short presentation where they present their proposed
 improvements, and how they panned out. This is not graded, but rather an
 informal session to see what your fellow students tried, and how that worked
-out. Prepare 1-2 slides per improvement, containing the aforementioned three
-points. The date and location of this session will be announced later in the
-course.
+out. Prepare 1-2 slides per improvement you implemented, containing the
+aforementioned three points. The date and location of this session will be
+announced later.
 
 
 
