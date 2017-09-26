@@ -429,7 +429,7 @@ We are now ready to provision a cluster. Go to the EMR service, and select *Crea
 
 EMR works with steps, which can be thought of as a job, or the execution of a single program. You can choose to add steps in the creation of the cluster, but this can also be done at a later time. Press *next*.
 
-In the *Hardware Configuration* screen, we can configure the arrangement and selection of the machines. I would suggest starting out with *m4.large* machines on spot pricing. You should be fine running an example workload with a single master node and two core nodes[2]. Be sure to select *spot pricing* and place an appropriate bid. Remember that you can always check the current prices in the information popup or on the [Amazon website](https://aws.amazon.com/ec2/spot/pricing/). After selecting the machines, press *next*.
+In the *Hardware Configuration* screen, we can configure the arrangement and selection of the machines. I would suggest starting out with *m4.large* machines on spot pricing. You should be fine running an example workload with a single master node and two core nodes.[2] Be sure to select *spot pricing* and place an appropriate bid. Remember that you can always check the current prices in the information popup or on the [Amazon website](https://aws.amazon.com/ec2/spot/pricing/). After selecting the machines, press *next*.
 
 In the *General Options* you can select a cluster name. You can tune where the system logs and a number of other features (more information in the popups). To install the dependencies on the system you need to add a *Bootstrap Action*. Select *Custom action*, then *Configure and add*. In this pop-up, give this action a appropriate name, the *Script location* should point to the dependency shell script in your previously created S3 bucket. Be aware that the correct install command on EC2 instances is `sudo pip-3.4`. You can leave the *Optional arguments* dialog empty. After finishing this step, press *next*.
 
@@ -497,4 +497,4 @@ Each group will have a short presentation where they present their proposed impr
 
 [1] An experienced Python developer will wonder why we are not using the more idiomatic approach using a `requirements.txt` together with `pip`. This is due to EC2’s bootstrapping mechanism being somewhat more straightforward to use with a simple Bash script.
 
-[2] By default, there are some limitations on the number of spot instances your account is allowed to provision. If you don’t have access to enough spot instances, the procedure to request additional can be found in the [AWS documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html).
+[2] By default, there are some limitations on the number of spot instances your account is allowed to provision. If you don’ t have access to enough spot instances, the procedure to request additional can be found in the [AWS documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html).

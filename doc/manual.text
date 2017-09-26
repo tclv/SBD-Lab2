@@ -189,10 +189,14 @@ In both cases ensure that both `python3` and `ipython3` are in your `PATH`, or
 insert the complete path in the previous two exports.
 
 For the pipeline, we will use a couple of libraries. Another bash script that
-downloads and installs these dependencies[^1] will be of great use later on.
-Depending on your platform, you will need to modify the install command. Linux
-users might need to add `sudo`. Some platforms require a specific version of
-Python, e.g. `pip-3.4`.
+downloads and installs these dependencies^[An experienced Python developer will 
+wonder why we are not using the more idiomatic approach using a 
+`requirements.txt` together with `pip`. This is due to EC2's bootstrapping
+mechanism being somewhat more straightforward to use with a simple Bash
+script.] will be of great use later on. Depending on your platform, you will
+need to modify the install command. Linux users might need to add `sudo`. Some
+platforms require a specific version of Python, e.g. `pip-3.4`.
+
 
 <!---
 I think py4j is not required as dependency
@@ -579,10 +583,13 @@ this can also be done at a later time. Press *next*.
 In the *Hardware Configuration* screen, we can configure the arrangement and
 selection of the machines. I would suggest starting out with *m4.large*
 machines on spot pricing. You should be fine running an example workload with a
-single master node and two core nodes[^2]. Be sure to select *spot pricing* and
-place an appropriate bid. Remember that you can always check the current prices
-in the information popup or on the [Amazon website][EC2 website]. After
-selecting the machines, press *next*.
+single master node and two core nodes.^[By default, there are some
+limitations on the number of spot instances your account is allowed to
+provision. If you don' t have access to enough spot instances, the procedure to
+request additional can be found in the [AWS documentation].] Be sure to
+select *spot pricing* and place an appropriate bid. Remember that you can
+always check the current prices in the information popup or on the [Amazon
+website][EC2 website]. After selecting the machines, press *next*.
 
 In the *General Options* you can select a cluster name. You can tune where the
 system logs and a number of other features (more information in the popups). To
@@ -692,15 +699,7 @@ out. Prepare 1-2 slides per improvement, containing the aforementioned three
 points. The date and location of this session will be announced later in the
 course.
 
-[^1]: An experienced Python developer will wonder why we are not using the more
-    idiomatic approach using a `requirements.txt` together with `pip`. This is
-    due to EC2's bootstrapping mechanism being somewhat more straightforward to
-    use with a simple Bash script.
 
-[^2]: By default, there are some limitations on the number of spot instances
-    your account is allowed to provision. If you don't have access to enough
-    spot instances, the procedure to request additional can be found in the
-    [AWS documentation].
 
   [Common Crawl]: http://commoncrawl.org
   [July 2017 crawl]: http://commoncrawl.org/2017/07/july-2017-crawl-archive-now-available/
