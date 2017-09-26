@@ -8,7 +8,7 @@ PANDOC_OPTIONS_LATEX=--latex-engine=xelatex --variable papersize=a4 --variable d
 		     --variable classoption=article --variable mainfont="TeX Gyre Pagella" \
 		     --variable mathfont="TeX Gyre Pagella" --variable monofont="Source Code Pro"
 
-PANDOC_OPTIONS_MD= -t markdown_github
+PANDOC_OPTIONS_MD= -t markdown_github --columns=79 --wrap=auto
 
 EXPORTED_DOCS=\
  $(INPUT:.text=.pdf)\
