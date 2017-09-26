@@ -6,9 +6,10 @@ PANDOC=pandoc
 PANDOC_OPTIONS=--filter pandoc-citeproc -S --normalize --standalone --highlight-style=pygments --toc -f markdown
 PANDOC_OPTIONS_LATEX=--latex-engine=xelatex --variable papersize=a4 --variable documentclass=memoir \
 		     --variable classoption=article --variable mainfont="TeX Gyre Pagella" \
-		     --variable mathfont="TeX Gyre Pagella" --variable monofont="Source Code Pro"
+		     --variable mathfont="TeX Gyre Pagella" --variable monofont="Source Code Pro" \
+		     -H preamble.tex
 
-PANDOC_OPTIONS_MD= -t markdown_github --columns=79 --wrap=auto
+PANDOC_OPTIONS_MD= -t markdown_github --wrap=preserve --reference-links
 
 EXPORTED_DOCS=\
  $(INPUT:.text=.pdf)\

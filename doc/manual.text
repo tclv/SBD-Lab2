@@ -4,15 +4,6 @@ title:
 
 author:
 - T.C. Leliveld
-
-date:
-- \today
-
-header-includes:
-  - \hypersetup{colorlinks=true}
-  - \raggedbottom
-  - \setlength{\parindent}{0pt}
-  - \nonzeroparskip
 ---
 
 Introduction
