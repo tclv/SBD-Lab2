@@ -140,13 +140,17 @@ class PhoneNumbers:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Phone number analysis using Apache Spark")
-    parser.add_argument("--input", '-i', metavar="segment_file", type=str, required=True,
-                        help="uri to input segment file")
-    parser.add_argument("--output", '-o', metavar="output_dir", type=str, required=True,
-                        help="uri to output directory")
-    parser.add_argument("--partitions", '-p', metavar="no_partitions", type=int,
+    parser.add_argument("--input", '-i', metavar="segment_index",
+                        type=str, required=True,
+                        help="URI to input segment index")
+    parser.add_argument("--output", '-o', metavar="output_dir",
+                        type=str, required=True,
+                        help="URI to output directory")
+    parser.add_argument("--partitions", '-p', metavar="no_partitions",
+                        type=int,
                         help="number of partitions in the input RDD")
-    parser.add_argument("--name", '-n', metavar="application_name", type=str, default="Phone Numbers",
+    parser.add_argument("--name", '-n', metavar="application_name",
+                        type=str, default="Phone Numbers",
                         help="override name of application")
     conf = parser.parse_args()
     pn = PhoneNumbers(conf.input, conf.output,
