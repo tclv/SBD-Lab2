@@ -7,9 +7,9 @@ PANDOC_OPTIONS=--filter pandoc-citeproc -S --normalize --standalone --highlight-
 PANDOC_OPTIONS_LATEX=--latex-engine=xelatex --variable papersize=a4 --variable documentclass=memoir \
 		     --variable classoption=article --variable mainfont="TeX Gyre Pagella" \
 		     --variable mathfont="TeX Gyre Pagella" --variable monofont="Source Code Pro" \
-		     -H preamble.tex
+		     -H preamble.tex --default-image-extension=pdf
 
-PANDOC_OPTIONS_MD= -t markdown_github --wrap=preserve 
+PANDOC_OPTIONS_MD= -t markdown_github --wrap=preserve --default-image-extension=svg
 
 EXPORTED_DOCS=\
  $(INPUT:.text=.pdf)\
