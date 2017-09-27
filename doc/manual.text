@@ -36,12 +36,11 @@ The goal of this lab is to:
 -   learn how to characterize your computation and what machines best fit this
     profile.
 
-You will work in groups of two. The first part of this lab will be used to
-develop an application that will be your baseline. After that you will get the
-freedom to optimize this application as you see fit. This could be in the form
-of a different analysis, that might force you to re-evaluate the
-characterization of the application, or in tuning specific parameters or parts
-of the original application.
+You will work in groups of two. In this lab manual we will introduce you with a 
+big data pipeline for mining dutch phone numbers from a web crawl. You will 
+have to optimize this application according to a metric you deem important. 
+This can be in terms of performance, cost, different analysis or a combination 
+of these. You get the freedom to optimize this application as you see fit.
 
 This lab will be graded on the basis of your report. In the spirit of giving
 you freedom to find interesting things to optimize, you will not be graded on
@@ -50,13 +49,14 @@ your contribution. After the reports are handed in, each group will present
 their suggested improvements and the results they achieved. Each student will
 also have a discussion with the TAs about their work.
 
-For each optimization, you need to provide a hypothesis why you think this will
-improve some metric. Try and quantify this as well, giving you some expected
-result. Report how you implemented the suggested improvement, and finally
-measure the improvement in the system. Did this match your hypothesis? More
-interestingly, if it did not, why? Let's illustrate this with an example:
+For each optimization you perform, you need to provide a hypothesis why you
+think this will improve some metric. Try and quantify this as well, giving you
+some expected result. Report how you implemented the suggested improvement, and
+finally measure the improvement in the system. Did this match your hypothesis?
+More interestingly, if it did not, why? Let's illustrate this with an example:
 
 > The analysis at hand takes about 4 hours to run on a cluster of 20 machines.
+> We are interested in optimizing the performance per dollar spent metric.
 > Consider the amount of IO that happens at the start of the computation. The
 > computation consists of analyzing 8TiB of data, thus each machine goes
 > through about 400GB of data. The machines provisioned have a 400 Mbps
@@ -80,6 +80,10 @@ interestingly, if it did not, why? Let's illustrate this with an example:
 
 Finally, please test your hypothesis with classmates, as this will improve
 everybody's understanding and that is what we are here for after all!
+
+The rest of the document explains how the pipeline works and gives a brief 
+introduction on working with AWS. At the end of the document there's a small 
+section detailing what needs to be done for the report and the presentation.
 
 Amazon Web Services
 ===================
@@ -142,7 +146,7 @@ WET files.
 Apache Spark
 ============
 
-For this assignment we will use Python in cooperation with Apache Spark. The
+For this assignment we will use Python 3 in cooperation with Apache Spark. The
 reason we're using Python (rather than Scala or Java) is the availability of
 WARC parsing libraries in Python. Every student is free to implement this in
 his/her language of choice, but the examples will given in Python. Installing
@@ -172,7 +176,7 @@ executables are in your path and run the following:
     SparkSession available as 'spark'.
 
 It is clear that Spark is using Python 2 instead of Python 3 in the above code
-listing. This behaviour can be changed by setting an environmental variable.
+listing. This behaviour should be changed by setting an environmental variable.
 
 ``` {.bash}
 export PYSPARK_PYTHON=python3
@@ -222,6 +226,8 @@ In this chapter, we will talk about the different stages of the standard Big
 Data Pipeline and how they apply to the analysis we are trying to perform. In
 the next chapter we will demonstrate how to chain these different stages
 together.
+
+![Standard Big Data pipeline.](./images/big_data_stages.pdf)
 
 Sense and Store
 ---------------
@@ -339,6 +345,7 @@ class PhoneFilter:
 Analysis
 --------
 
+
 We would like to analyze the phone numbers and the websites they are referenced
 on, after we complete the filtering stage. To allow for this analysis, we want
 to store the results in a suitable format. Apache Spark has introduced
@@ -356,7 +363,7 @@ to store the results in a suitable format. Apache Spark has introduced
 This is a common pattern, where we use RDDs to go from unstructured data, and
 filter it and organize it so that we end up with (semi-)structured data. This
 data can than be more effectively analyzed using the Spark SQL tools, among
-which Dataframes.
+which DataFrames.
 
 To use DataFrames we need to specify a schema. In our case the schema will be
 the following.
@@ -380,7 +387,9 @@ Chaining the Pipeline Together
 ==============================
 
 In this chapter we will demonstrate how we can use Apache Spark to chain this
-pipeline together. First off we need to load the relevant input document.
+pipeline together. First off we need to load the relevant input segment index.
+
+![Overview of the analysis and different RDD's.](./images/pipeline.pdf)
 
 ``` {.python}
 import spark
@@ -510,7 +519,7 @@ of segment URIs in the input segment index).
 
 A complete version of this program can be found on the [lab's GitHub]
 repository. Play around with the script, and reading the data. How many phone
-numbers can you find in the four sample files. Try and estimate how many there
+numbers can you find in the four sample files? Try and estimate how many there
 will be in the complete data set based on this.
 
 Using AWS
@@ -550,8 +559,8 @@ aws 3 mv path/to/file s3://destination-bucket/path/to/file
 The aws-cli contains much more functionality, which can be found on the
 [AWS-CLI docs].
 
-Move the phone analyser script, the dependency shell script, and the segment
-index to your S3 bucket.
+Move the phone analyzer script, the dependency shell script, and the segment
+indices to your S3 bucket.
 
 We are now ready to provision a cluster. Go to the EMR service, and select
 *Create Cluster*. Next select *Go to advanced options*, select the latest
@@ -669,8 +678,9 @@ Report
 ======
 
 We have become familiar with both the pipeline in this exercise, as well as the
-AWS infrastructure. It is now up to you to find areas that you could improve
-the pipeline in. Remember to report the following:
+AWS infrastructure. Now determine a metric you are trying to optimize. Based on 
+this metric find areas that you could improve the pipeline in. Remember to
+report the following:
 
 -   hypothesis (preferably quantitatively) about what your change is going to
     do,
@@ -680,7 +690,8 @@ the pipeline in. Remember to report the following:
 As a starting point you can make a good analysis of the application. Figure out 
 what kind of of I/O is happening (e.g. how much MB's does each machine have to 
 download) versus the amount of compute time that is happening. You can try and 
-find the optimal machine for this in a performance per dollar sense. 
+find the optimal machine for your metric. You can compare this to a "general 
+purpose" m4.large machine.
 
 A word of advice: Be careful not to overspend your credits! It is your 
 responsibility to ensure you are not blowing all your credits straight away. 

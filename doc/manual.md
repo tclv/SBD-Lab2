@@ -30,17 +30,19 @@ The goal of this lab is to:
 -   learn about the existing infrastructure for big data and the difficulties with these, and
 -   learn how to characterize your computation and what machines best fit this profile.
 
-You will work in groups of two. The first part of this lab will be used to develop an application that will be your baseline. After that you will get the freedom to optimize this application as you see fit. This could be in the form of a different analysis, that might force you to re-evaluate the characterization of the application, or in tuning specific parameters or parts of the original application.
+You will work in groups of two. In this lab manual we will introduce you with a big data pipeline for mining dutch phone numbers from a web crawl. You will have to optimize this application according to a metric you deem important. This can be in terms of performance, cost, different analysis or a combination of these. You get the freedom to optimize this application as you see fit.
 
 This lab will be graded on the basis of your report. In the spirit of giving you freedom to find interesting things to optimize, you will not be graded on the achieved result, but on the quality of your analysis and the originality of your contribution. After the reports are handed in, each group will present their suggested improvements and the results they achieved. Each student will also have a discussion with the TAs about their work.
 
-For each optimization, you need to provide a hypothesis why you think this will improve some metric. Try and quantify this as well, giving you some expected result. Report how you implemented the suggested improvement, and finally measure the improvement in the system. Did this match your hypothesis? More interestingly, if it did not, why? Let’s illustrate this with an example:
+For each optimization you perform, you need to provide a hypothesis why you think this will improve some metric. Try and quantify this as well, giving you some expected result. Report how you implemented the suggested improvement, and finally measure the improvement in the system. Did this match your hypothesis? More interestingly, if it did not, why? Let’s illustrate this with an example:
 
-> The analysis at hand takes about 4 hours to run on a cluster of 20 machines. Consider the amount of IO that happens at the start of the computation. The computation consists of analyzing 8TiB of data, thus each machine goes through about 400GB of data. The machines provisioned have a 400 Mbps connection. Each machine spends about 133 minutes downloading. For an extra $0.10 I can upgrade the machines one tier, doubling the connection speed. This moves the price from $0.20 to $0.30 per machine per instance hour. The machines spend half the time downloading, cutting of an hour of the computation, a 33% increase in speed. The provisioning cost of the machines changes from 20 ⋅ 0.20 ⋅ 4, to 20 ⋅ 0.30 ⋅ 3, or 16 to 18: a 10% decrease.
+> The analysis at hand takes about 4 hours to run on a cluster of 20 machines. We are interested in optimizing the performance per dollar spent metric. Consider the amount of IO that happens at the start of the computation. The computation consists of analyzing 8TiB of data, thus each machine goes through about 400GB of data. The machines provisioned have a 400 Mbps connection. Each machine spends about 133 minutes downloading. For an extra $0.10 I can upgrade the machines one tier, doubling the connection speed. This moves the price from $0.20 to $0.30 per machine per instance hour. The machines spend half the time downloading, cutting of an hour of the computation, a 33% increase in speed. The provisioning cost of the machines changes from 20 ⋅ 0.20 ⋅ 4, to 20 ⋅ 0.30 ⋅ 3, or 16 to 18: a 10% decrease.
 >
 > This is tested by provisioning m4.xlarge machines instead of m4.large. This resulted in a computation that ran 50 minutes shorter. Due to the baseline being shorter than 4 hours it still resulted in an entire instance hour less than the baseline, so in practice we achieve a slightly smaller performance increase (26%), while still maintaining a 10% decrease in cost. This can be attributed to the CPUs of the machines not being able to keep up with the network connection. This can be seen from the CloudWatch monitoring tools, where it’s clear that our CPUs are over utilized, but the machines have leftover network bandwidth.
 
 Finally, please test your hypothesis with classmates, as this will improve everybody’s understanding and that is what we are here for after all!
+
+The rest of the document explains how the pipeline works and gives a brief introduction on working with AWS. At the end of the document there’s a small section detailing what needs to be done for the report and the presentation.
 
 Amazon Web Services
 ===================
@@ -82,7 +84,7 @@ The exact specification is [ISO 28500:2017](http://bibnum.bnf.fr/warc/WARC_ISO_2
 Apache Spark
 ============
 
-For this assignment we will use Python in cooperation with Apache Spark. The reason we’re using Python (rather than Scala or Java) is the availability of WARC parsing libraries in Python. Every student is free to implement this in his/her language of choice, but the examples will given in Python. Installing Apache Spark (and PySpark) should be straightforward on any Unix based system by using your system’s package manager (apt-get, yum, pacman, brew, etc.). We will be using Python 3, which might not be the default Python Apache Spark uses. This can be verified by running PySpark. Ensure that the Spark executables are in your path and run the following:
+For this assignment we will use Python 3 in cooperation with Apache Spark. The reason we’re using Python (rather than Scala or Java) is the availability of WARC parsing libraries in Python. Every student is free to implement this in his/her language of choice, but the examples will given in Python. Installing Apache Spark (and PySpark) should be straightforward on any Unix based system by using your system’s package manager (apt-get, yum, pacman, brew, etc.). We will be using Python 3, which might not be the default Python Apache Spark uses. This can be verified by running PySpark. Ensure that the Spark executables are in your path and run the following:
 
     ~ pyspark
     Python 2.7.13 (default, Jun  5 2017, 14:24:39)
@@ -103,7 +105,7 @@ For this assignment we will use Python in cooperation with Apache Spark. The rea
     Using Python version 2.7.13 (default, Jun  5 2017 14:24:39)
     SparkSession available as 'spark'.
 
-It is clear that Spark is using Python 2 instead of Python 3 in the above code listing. This behaviour can be changed by setting an environmental variable.
+It is clear that Spark is using Python 2 instead of Python 3 in the above code listing. This behaviour should be changed by setting an environmental variable.
 
 ``` bash
 export PYSPARK_PYTHON=python3
@@ -139,6 +141,8 @@ Building the pipeline
 =====================
 
 In this chapter, we will talk about the different stages of the standard Big Data Pipeline and how they apply to the analysis we are trying to perform. In the next chapter we will demonstrate how to chain these different stages together.
+
+![Standard Big Data pipeline.](./images/big_data_stages.pdf)
 
 Sense and Store
 ---------------
@@ -236,7 +240,7 @@ We would like to analyze the phone numbers and the websites they are referenced 
 >
 > A DataFrame is a Dataset organized into named columns. It is conceptually equivalent to a table in a relational database or a data frame in R/Python, but with richer optimizations under the hood.
 
-This is a common pattern, where we use RDDs to go from unstructured data, and filter it and organize it so that we end up with (semi-)structured data. This data can than be more effectively analyzed using the Spark SQL tools, among which Dataframes.
+This is a common pattern, where we use RDDs to go from unstructured data, and filter it and organize it so that we end up with (semi-)structured data. This data can than be more effectively analyzed using the Spark SQL tools, among which DataFrames.
 
 To use DataFrames we need to specify a schema. In our case the schema will be the following.
 
@@ -257,7 +261,9 @@ We do not have anything planned here, but if someone knows a cool way to visuali
 Chaining the Pipeline Together
 ==============================
 
-In this chapter we will demonstrate how we can use Apache Spark to chain this pipeline together. First off we need to load the relevant input document.
+In this chapter we will demonstrate how we can use Apache Spark to chain this pipeline together. First off we need to load the relevant input segment index.
+
+![Overview of the analysis and different RDD’s.](./images/pipeline.pdf)
 
 ``` python
 import spark
@@ -373,7 +379,7 @@ if __name__ == "__main__":
 
 The advantage of this is that we can quickly try our program against different segment indices. This determines whether we will download the files from AWS, or use the local files, and how many segments we will analyze (i.e. the number of segment URIs in the input segment index).
 
-A complete version of this program can be found on the [lab’s GitHub](https://github.com/Tclv/SBD-Lab2/blob/master/phone_number_analysis.py) repository. Play around with the script, and reading the data. How many phone numbers can you find in the four sample files. Try and estimate how many there will be in the complete data set based on this.
+A complete version of this program can be found on the [lab’s GitHub](https://github.com/Tclv/SBD-Lab2/blob/master/phone_number_analysis.py) repository. Play around with the script, and reading the data. How many phone numbers can you find in the four sample files? Try and estimate how many there will be in the complete data set based on this.
 
 Using AWS
 =========
@@ -407,7 +413,7 @@ aws 3 mv path/to/file s3://destination-bucket/path/to/file
 
 The aws-cli contains much more functionality, which can be found on the [AWS-CLI docs](https://aws.amazon.com/cli/).
 
-Move the phone analyser script, the dependency shell script, and the segment index to your S3 bucket.
+Move the phone analyzer script, the dependency shell script, and the segment indices to your S3 bucket.
 
 We are now ready to provision a cluster. Go to the EMR service, and select *Create Cluster*. Next select *Go to advanced options*, select the latest release, and check the frameworks you want to use (in this case Spark, and Hadoop). We need to enter some software settings specifically to ensure we are using Python 3. Enter the following in the *Edit software settings* dialog. A copy paste friendly example can be found on the [AWS site](https://aws.amazon.com/premiumsupport/knowledge-center/emr-pyspark-python-3x/).
 
@@ -480,13 +486,13 @@ Out[4]: 106
 Report
 ======
 
-We have become familiar with both the pipeline in this exercise, as well as the AWS infrastructure. It is now up to you to find areas that you could improve the pipeline in. Remember to report the following:
+We have become familiar with both the pipeline in this exercise, as well as the AWS infrastructure. Now determine a metric you are trying to optimize. Based on this metric find areas that you could improve the pipeline in. Remember to report the following:
 
 -   hypothesis (preferably quantitatively) about what your change is going to do,
 -   implementation, how did you go about implementing the change, and
 -   results, was your hypothesis correct (if not, why?).
 
-As a starting point you can make a good analysis of the application. Figure out what kind of of I/O is happening (e.g. how much MB’s does each machine have to download) versus the amount of compute time that is happening. You can try and find the optimal machine for this in a performance per dollar sense.
+As a starting point you can make a good analysis of the application. Figure out what kind of of I/O is happening (e.g. how much MB’s does each machine have to download) versus the amount of compute time that is happening. You can try and find the optimal machine for your metric. You can compare this to a “general purpose” m4.large machine.
 
 A word of advice: Be careful not to overspend your credits! It is your responsibility to ensure you are not blowing all your credits straight away. How much data do you need to process to get a reasonable indication of the performance on the entire dataset? Can you make meaningful prediction from working with smaller sample sizes? Try and extrapolate this to the entire dataset.
 
