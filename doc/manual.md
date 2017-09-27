@@ -142,7 +142,7 @@ Building the pipeline
 
 In this chapter, we will talk about the different stages of the standard Big Data Pipeline and how they apply to the analysis we are trying to perform. In the next chapter we will demonstrate how to chain these different stages together.
 
-![Standard Big Data pipeline.](./images/big_data_stages.svg)
+![Standard Big Data pipeline.](./images/big_data_stages.png)
 
 Sense and Store
 ---------------
@@ -263,7 +263,7 @@ Chaining the Pipeline Together
 
 In this chapter we will demonstrate how we can use Apache Spark to chain this pipeline together. First off we need to load the relevant input segment index.
 
-![Overview of the analysis and different RDD’s.](./images/pipeline.svg)
+![Overview of the analysis and different RDD’s.](./images/pipeline.png)
 
 ``` python
 import spark
