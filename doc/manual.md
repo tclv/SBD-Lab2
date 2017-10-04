@@ -218,7 +218,7 @@ In Python we can compile these regular expressions for faster repeated usage.
 ``` python
 import re
 
-class PhoneFilter:
+class PhoneNumbers:
     phone_nl_filter = re.compile(phone_regex)
     clean_filter = re.compile(replace_regex)
     zero_to_plus_filter = re.compile(zeroplus_regex)
@@ -269,7 +269,7 @@ In this chapter we will demonstrate how we can use Apache Spark to chain this pi
 import spark
 import spark.sql
 
-class PhoneNumberExtractor:
+class PhoneNumbers:
 
     def __init__(self, input_file, output_dir, name, partitions=None):
         self.name = name
@@ -298,14 +298,14 @@ class PhoneNumberExtractor:
 If the URIs from the input file refer to a local file, we can simply return the file (in binary mode).
 
 ``` python
-def get_file(self, file_uri):
+def process_file_warc(self, file_uri):
     return open(file_uri, 'rb') # Binary mode
 ```
 
 If the URI refers to an S3 link, we need to download it first. We use [`boto3`](http://boto3.readthedocs.io/en/latest/), a library for interacting with S3, to download the segments. To download a segment, a file handle has to be supplied. We can use [`TemporaryFile`](https://docs.python.org/3/library/tempfile.html#tempfile.TemporaryFile) to generate temporary files (and handles). These files are automatically removed when the file handle is garbage collected.
 
 ``` python
-def get_s3(self, s3_uri)
+def process_s3_warc(self, uri)
     no_sign_request = botocore.client.Config(signature_version=botocore.UNSIGNED)
     s3client = boto3.client('s3', config=no_sign_request)
     s3pattern = re.compile('^s3://([^/]+)/(.+)')
