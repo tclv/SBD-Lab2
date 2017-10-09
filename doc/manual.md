@@ -84,7 +84,7 @@ The exact specification is [ISO 28500:2017](http://bibnum.bnf.fr/warc/WARC_ISO_2
 Apache Spark
 ============
 
-For this assignment we will use Python 3 in cooperation with Apache Spark. The reason we’re using Python (rather than Scala or Java) is the availability of WARC parsing libraries in Python. Every student is free to implement this in his/her language of choice, but the examples will given in Python. Installing Apache Spark (and PySpark) should be straightforward on any Unix based system by using your system’s package manager (apt-get, yum, pacman, brew, etc.). We will be using Python 3, which might not be the default Python Apache Spark uses. This can be verified by running PySpark. Ensure that the Spark executables are in your path and run the following:
+For this assignment we will use Python 3 in cooperation with Apache Spark. The reason we’re using Python (rather than Scala or Java) is the availability of WARC parsing libraries in Python. Every student is free to implement this in his/her language of choice, but the examples will given in Python. Installing Apache Spark (and PySpark) should be straightforward on any Unix based system by using your system’s package manager (apt-get, yum, pacman, brew, etc.) and pip for PySpark, or follow the instructions on the [Spark overview page](https://spark.apache.org/docs/latest/). We will be using Python 3, which might not be the default Python Apache Spark uses. This can be verified by running PySpark. Ensure that the Spark executables are in your path and run the following:
 
     ~ pyspark
     Python 2.7.13 (default, Jun  5 2017, 14:24:39)
@@ -128,7 +128,7 @@ I think py4j is not required as dependency
 #!/usr/bin/env bash
 
 INSTALL_COMMAND="pip3 install"
-dependencies="warcio requests requests_file boto3 botocore py4j spark" 
+dependencies="warcio requests requests_file boto3 botocore py4j" 
 
 for dep in $dependencies; do
     $INSTALL_COMMAND $dep
@@ -507,4 +507,4 @@ Each group will have a short presentation where they present their proposed impr
 
 [1] An experienced Python developer will wonder why we are not using the more idiomatic approach using a `requirements.txt` together with `pip`. This is due to EC2’s bootstrapping mechanism being somewhat more straightforward to use with a simple Bash script.
 
-[2] By default, there are some limitations on the number of spot instances your account is allowed to provision. If you don’ t have access to enough spot instances, the procedure to request additional can be found in the [AWS documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html).
+[2] By default, there are some limitations on the number of spot instances your account is allowed to provision. If you don’t have access to enough spot instances, the procedure to request additional can be found in the [AWS documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html).
