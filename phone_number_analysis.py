@@ -1,18 +1,14 @@
 #!/usr/bin/env Python3
 
 from warcio.archiveiterator import ArchiveIterator
-from warcio.recordloader import ArchiveLoadFailed
 
 from tempfile import TemporaryFile
 
 import argparse
 
-from pyspark import SparkContext, SparkConf
+from pyspark import SparkContext
 from pyspark.sql import SQLContext
 from pyspark.sql.types import StructType, StructField, StringType, ArrayType
-
-import requests
-from requests_file import FileAdapter
 
 import boto3
 import botocore
@@ -57,6 +53,7 @@ class PhoneNumbers:
 
         sqlc.createDataFrame(phone_numb_agg_web, schema=self.output_schema) \
                 .write \
+                .mode("overwrite") \
                 .format("parquet") \
                 .save(self.output_dir)
 
@@ -64,7 +61,7 @@ class PhoneNumbers:
         self.log(sc, "Failed parses: {}".format(self.failed_record_parse.value))
 
     def log(self, sc, message, level="warn"):
-        log = sc._jvm.org.apache.log4j.LogManager.getLogger(self.name) 
+        log = sc._jvm.org.apache.log4j.LogManager.getLogger(self.name)
         if level == "info":
             log.info(message)
         elif level == "warn":
@@ -110,7 +107,7 @@ class PhoneNumbers:
             print("Error ocurred loading file: {}".format(input_file))
             self.failed_segment.add(1)
             return None
-            
+
     def process_records(self, stream):
         try:
             for rec in ArchiveIterator(stream):
@@ -136,7 +133,7 @@ class PhoneNumbers:
                             re.sub(self.replace_filter, "", num))
                      for num in numbers}
         for num in nums_filt:
-            yield num 
+            yield num
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Phone number analysis using Apache Spark")
